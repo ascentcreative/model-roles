@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::dropIfExists('model_user_roles');
         Schema::create('model_user_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('model_type');
+            $table->string('model_type', 191);
             $table->integer('model_id');
             $table->integer('user_id');
-            $table->string('role');
+            $table->string('role', 191);
             $table->timestamps();
 
             $table->index(['model_type', 'model_id', 'role'], 'model_role_key');
