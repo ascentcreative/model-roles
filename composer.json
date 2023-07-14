@@ -1,0 +1,26 @@
+{
+  "name": "ascentcreative/model-roles",
+  "description": "Library for granting users roles on specific model contexts",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Ascent Creative",
+      "email": "info@ascent-creative.co.uk"
+    }
+  ],
+  "require": {
+   
+  },
+  "autoload": {
+    "psr-4": {
+      "AscentCreative\\ModelRoles\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+        "providers": [
+            "AscentCreative\\ModelRoles\\ModelRolesServiceProvider"
+        ]
+    }
+}
+}
