@@ -33,5 +33,17 @@ trait HasModelRoles {
         return $this->hasMany(ModelUserRole::class);
     }
 
+    public function grantModelRole($model, $role) {
+
+        $mr = ModelUserRole::updateOrCreate([
+            'user_id'=>$this->id,
+            'model_type' => get_class($model),
+            'model_id' => $model->id,
+        ], [
+            'role'=>$role,
+        ]);
+
+    }
+
 
 }
