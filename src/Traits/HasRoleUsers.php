@@ -77,4 +77,17 @@ trait HasRoleUsers {
     }
 
 
+    public function getUserRole(User $user) {
+        
+        $modelRole = $this->modelRoles()->where('user_id', $user->id)->first();
+
+        if($modelRole) {
+            return $modelRole->role;
+        }
+
+        return null;
+
+    }
+
+
 }
