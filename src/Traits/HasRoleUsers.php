@@ -26,6 +26,7 @@ trait HasRoleUsers {
         return $this->roleUsers($roles)->get();
     }
 
+
     public function roleUsers($roles) {
 
         if(!is_array($roles)) {
@@ -38,8 +39,9 @@ trait HasRoleUsers {
                     ->whereIn('role', $roles);
     }
 
-    public function users() {
-        return $this->hasManyDeep(
+
+    public function users($roles=null) {
+        $q = $this->hasManyDeep(
             User::class,
             [ModelUserRole::class],
             [
@@ -52,6 +54,17 @@ trait HasRoleUsers {
             ]
 
         );
+
+        if(!is_null($roles)) {
+
+            if(!is_array($roles)) {
+                $roles = [$roles];
+            }
+
+            $q->whereIn('model_user_roles.role', $roles);
+        }
+
+        return $q;
     }
 
     public function modelRoles() {
