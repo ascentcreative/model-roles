@@ -90,7 +90,11 @@ trait HasRoleUsers {
     }
 
 
-    public function getUserRole(User $user) {
+    public function getUserRole(User $user = null) {
+
+        if(!$user) {
+            $user = auth()->user();
+        }
         
         $modelRole = $this->modelRoles()->where('user_id', $user->id)->first();
 
