@@ -17,7 +17,7 @@ trait HasModelRoles {
         }
 
         // cache key:
-        $key = 'hasmodelrole_' . get_class($model) . '_' . $model->id . '_' . join('_', $roles);
+        $key = 'hasmodelrole_' . $this->id . '_' . get_class($model) . '_' . $model->id . '_' . join('_', $roles);
     
         $check = Cache::remember($key, 10, function() use ($model, $roles) {
             // dump('storing');
