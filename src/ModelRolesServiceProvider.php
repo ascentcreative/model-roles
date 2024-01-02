@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Routing\Router;
 
+use Illuminate\Contracts\Foundation\Application;
+
 class ModelRolesServiceProvider extends ServiceProvider
 {
   public function register()
@@ -30,7 +32,10 @@ class ModelRolesServiceProvider extends ServiceProvider
 
     $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-    
+    $this->app->singleton(UserRoleCache::class, function (Application $app) {
+        return new UserRoleCache();
+    });
+
   }
 
   
