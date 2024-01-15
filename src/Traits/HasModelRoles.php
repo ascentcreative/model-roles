@@ -6,9 +6,11 @@ use AscentCreative\ModelRoles\Models\ModelUserRole;
 
 use Illuminate\Support\Facades\Cache;
 
+
 // Trait to apply to the User model
 // Gives access to shortcut methods to check if a user has roles against models.
 trait HasModelRoles {
+
 
     public function hasModelRole($roles, $model) {
 
@@ -39,12 +41,18 @@ trait HasModelRoles {
 
     }
 
-    
-
     public function modelRoles() {
         return $this->hasMany(ModelUserRole::class);
     }
 
+    public function models($class, $roles=[]) {
+
+        return $this->belongsToMany($class, ModelUserRole::class, 'user_id', 'model_id')
+            ->where('model_type', $class);
+
+    }
+
+   
     public function grantModelRole($model, $role) {
 
         $mr = ModelUserRole::updateOrCreate([
