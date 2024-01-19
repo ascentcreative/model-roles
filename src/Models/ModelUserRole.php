@@ -10,7 +10,7 @@ use App\Models\User;
 class ModelUserRole extends Model
 {
 
-    use HasFactory;
+    use HasFactory, \Staudenmeir\EloquentHasManyDeep\HasTableAlias;
 
     protected $table = 'model_user_roles';
     protected $fillable = ['model_type', 'model_id', 'user_id', 'role'];
