@@ -7,6 +7,8 @@ use AscentCreative\ModelRoles\Models\ModelUserRole;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships; 
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 
+use Illuminate\Support\Facades\Cache;
+
 use App\Models\User;
 
 // Trait to apply to the target Model
@@ -23,7 +25,24 @@ trait HasRoleUsers {
     }
 
     public function getRoleUsers($roles) {
-        return $this->roleUsers($roles)->get();
+
+        if(!is_array($roles)) {
+            $roles = [$roles];
+        }
+
+        // cache key:
+        $key = 'roleusers_' . get_class($this) . '_' . $this->id . '_' . join('_', $roles);
+        // dump($key);
+
+        // Cache::forget($key);
+
+        $check = Cache::remember($key, 10, function() use ($roles) {
+            // dump('getting users for ' . join(', ', $roles));
+            return $this->roleUsers($roles)->get();
+        });
+
+        return $check; //$q->exists();   
+       
     }
 
 
