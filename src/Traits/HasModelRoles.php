@@ -47,8 +47,14 @@ trait HasModelRoles {
 
     public function models($class, $roles=[]) {
 
-        return $this->belongsToMany($class, ModelUserRole::class, 'user_id', 'model_id')
+        $q = $this->belongsToMany($class, ModelUserRole::class, 'user_id', 'model_id')
             ->where('model_type', $class);
+
+        if (count($roles) > 0) {
+            $q->whereIn('model_user_roles.role', $roles);
+        }
+
+        return $q;
 
     }
 
