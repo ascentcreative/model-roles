@@ -108,6 +108,23 @@ trait HasRoleUsers {
 
     }
 
+    public function revokeUserRole($user, $role) {
+
+        if(is_numeric($user)) {
+            $user_id = $user;
+        } else {
+            $user_id = $user->id;
+        }
+
+        $mr = ModelUserRole::where('user_id', $user_id)
+                        ->where('model_type', get_class($this))
+                        ->where('model_id', $this->id)
+                        ->where('role', $role)->first();
+
+        $mr->delete();
+
+    }
+
 
     public function getUserRole(User $user = null) {
 
@@ -123,6 +140,35 @@ trait HasRoleUsers {
 
         return null;
 
+    }
+
+
+    public function syncRoleUsers($role, $users) {
+
+        // get all the stored users for the given role:
+        $stored = $this->users($role)->get()->pluck('id')->toArray();
+
+        foreach($users as $user) {
+
+            if(is_numeric($user)) {
+                $user_id = $user;
+            } else {
+                $user_id = $user->id;
+            }
+
+            $idx = \array_search($user_id, $stored);
+            if($idx === false) {
+                $this->grantUserRole($user_id, $role);
+            } else {
+                unset($stored[$idx]);
+            }
+        }
+        
+        // anything remaining in stored should now be removed:
+        foreach($stored as $revoke_id) {
+            $this->revokeUserRole($revoke_id, $role);
+        }
+    
     }
 
 

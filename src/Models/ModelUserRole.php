@@ -24,6 +24,10 @@ class ModelUserRole extends Model
             ModelUserRoleEvent::dispatch($model, ModelUserRoleEvent::MODELUSERROLE_GRANTED);
         });
 
+        // static::deleted(function($model) {
+        //     ModelUserRoleEvent::dispatch($model, ModelUserRoleEvent::MODELUSERROLE_REVOKED);
+        // });
+
     }
 
     public function user() {
