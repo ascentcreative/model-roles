@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
+use AscentCreative\ModelRoles\Events\ModelUserRoleEvent;
 
 class ModelUserRole extends Model
 {
@@ -14,6 +15,16 @@ class ModelUserRole extends Model
 
     protected $table = 'model_user_roles';
     protected $fillable = ['model_type', 'model_id', 'user_id', 'role'];
+
+    // Boot events etc
+   public static function booted() {
+
+        static::created(function($model) {
+            // fire event
+            ModelUserRoleEvent::dispatch($model, ModelUserRoleEvent::MODELUSERROLE_GRANTED);
+        });
+
+    }
 
     public function user() {
         return $this->belongsTo(User::class);
