@@ -102,8 +102,9 @@ trait HasRoleUsers {
             'user_id'=>$user_id,
             'model_type' => get_class($this),
             'model_id' => $this->id,
-        ], [
             'role'=>$role,
+        ], [
+           
         ]);
 
     }
@@ -125,6 +126,50 @@ trait HasRoleUsers {
 
     }
 
+
+    public function userRoles(User $user = null) {
+
+        if(!$user) {
+            $user = auth()->user();
+        }
+
+        return $this->modelRoles()->where('user_id', $user->id);
+
+    }
+
+    public function userRoleNames(User $user = null) {
+        return $this->userRoles($user)->pluck('role');
+    }
+
+    public function toggleUserRole(User $user=null, string $role) {
+
+        if(!$user) {
+            $user = auth()->user();
+        }
+
+        // dd($this);
+        // dump($this->userRoleNames($user)->search($role));
+
+        if($this->userHasRole(null, $role)) {
+            // dump('revoke');
+            $this->revokeUserRole($user, $role);
+            return false;
+        } else {
+            // dump('grant');
+            $this->grantUserRole($user, $role);
+            return true;
+        }
+    }
+
+    public function userHasRole($user, $role) {
+
+        if(!$user) {
+            $user = auth()->user();
+        }
+
+        return $this->userRoleNames($user)->search($role) !== false;
+
+    }
 
     public function getUserRole(User $user = null) {
 
@@ -169,6 +214,21 @@ trait HasRoleUsers {
             $this->revokeUserRole($revoke_id, $role);
         }
     
+    }
+
+
+
+    public function scopeUserHasRole($q, $role, $user=null) {
+
+        if(!$user) {
+            $user = auth()->user();
+        }
+
+        $q->whereHas('modelRoles', function($q) use ($user, $role) {
+            $q->where('role', $role)
+                ->where('user_id', $user->id);
+        });
+
     }
 
 
