@@ -13,6 +13,9 @@ class ModelUserRole extends Model
 
     use HasFactory, \Staudenmeir\EloquentHasManyDeep\HasTableAlias;
 
+    // maybe need to make this configurable!
+    public $connection = 'mysql';
+
     protected $table = 'model_user_roles';
     protected $fillable = ['model_type', 'model_id', 'user_id', 'role'];
 
