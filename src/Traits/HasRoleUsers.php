@@ -122,7 +122,8 @@ trait HasRoleUsers {
                         ->where('model_id', $this->id)
                         ->where('role', $role)->first();
 
-        $mr->delete();
+        if($mr)
+            $mr->delete();
 
     }
 
