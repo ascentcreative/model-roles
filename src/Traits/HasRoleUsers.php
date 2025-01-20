@@ -10,12 +10,15 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
+use AscentCreative\CMS\Traits\Extender;
+
+use Illuminate\Support\Str;
 
 // Trait to apply to the target Model
 // Gives access to shortcut methods to see which users have roles etc
 trait HasRoleUsers {
 
-    use HasRelationships;
+    use HasRelationships, Extender;
 
     public function hasRoleUsers($roles) {
 
@@ -59,31 +62,55 @@ trait HasRoleUsers {
     }
 
 
-    public function users($roles=null) {
-        $q = $this->hasManyDeep(
-            User::class,
-            [ModelUserRole::class],
-            [
-                ['model_type', 'model_id'],
-                'id'
-            ],
-            [
-                null,
-                'user_id'
-            ]
+    /**
+     * Retired version of the relationship - realised morphToMany is better (has a sync())
+     */
+    // public function old_users($roles=null) {
+    //     $q = $this->hasManyDeep(
+    //         User::class,
+    //         [ModelUserRole::class],
+    //         [
+    //             ['model_type', 'model_id'],
+    //             'id'
+    //         ],
+    //         [
+    //             null,
+    //             'user_id'
+    //         ]
 
-        );
+    //     );
+
+    //     if(!is_null($roles)) {
+
+    //         if(!is_array($roles)) {
+    //             $roles = [$roles];
+    //         }
+
+    //         $q->whereIn('model_user_roles.role', $roles);
+    //     }
+
+    //     return $q;
+    // }
+
+
+    /**
+     * Updated version using morphToMany()
+     */
+    public function users($roles = null) {
+
+        $q = $this->morphToMany(User::class, 'model', 'model_user_roles');
 
         if(!is_null($roles)) {
 
             if(!is_array($roles)) {
                 $roles = [$roles];
             }
-
-            $q->whereIn('model_user_roles.role', $roles);
+            $q->wherePivotIn('role', $roles);
+            
         }
 
         return $q;
+
     }
 
     public function modelRoles() {
@@ -230,6 +257,22 @@ trait HasRoleUsers {
                 ->where('user_id', $user->id);
         });
 
+    }
+
+
+    // Extender:
+    public function initializeHasRoleUsers() {
+        if(is_array($this->_modelRoles)) {
+            foreach($this->_modelRoles as $role) {
+                $this->addCapturable(Str::plural($role), false, 'saveRoleUsers');
+            }
+        }
+    }
+
+
+    public function saveRoleUsers($key, $value) {
+        // dd($key);
+        $this->$key()->sync($value ?? []);
     }
 
 
