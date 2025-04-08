@@ -98,7 +98,8 @@ trait HasRoleUsers {
      */
     public function users($roles = null) {
 
-        $q = $this->morphToMany(User::class, 'model', 'model_user_roles');
+        $q = $this->morphToMany(User::class, 'model', 'model_user_roles')
+                        ->withTimestamps();
 
         if(!is_null($roles)) {
 
@@ -271,7 +272,7 @@ trait HasRoleUsers {
 
 
     public function saveRoleUsers($key, $value) {
-        // dd($key);
+        dd($key);
         $this->$key()->sync($value ?? []);
     }
 
