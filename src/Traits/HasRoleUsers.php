@@ -272,7 +272,6 @@ trait HasRoleUsers {
 
 
     public function saveRoleUsers($key, $value) {
-        dd($key);
         $this->$key()->sync($value ?? []);
     }
 
